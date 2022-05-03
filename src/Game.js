@@ -15,6 +15,7 @@ class Game {
     this.api = api;
     this.name = name;
     this.player = player;
+    this.sayInChat = this.sayInChat.bind(this)
   }
 
   start(gameId) {
@@ -48,14 +49,20 @@ class Game {
     }
   }
 
+  sayInChat(msg) {
+    this.api.chat(this.gameId, 'player', msg);
+  }
+
   playNextMove(previousMoves) {
     const moves = (previousMoves === "") ? [] : previousMoves.split(" ");
     if (this.isTurn(this.colour, moves)) {
-      const nextMove = this.player.getNextMove(moves);
-      if (nextMove) {
-        console.log(this.name + " as " + this.colour + " to move " + nextMove);
-        this.api.makeMove(this.gameId, nextMove);
-      }
+      this.player.getNextMove(moves, this.sayInChat).then(nextMove => {
+        console.log(`\n\n nextmove: ${nextMove} \n\n`);
+        if (nextMove) {
+          console.log(this.name + " as " + this.colour + " to move " + nextMove);
+          this.api.makeMove(this.gameId, nextMove);
+        }
+      })
     }
   }
 

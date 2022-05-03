@@ -1,8 +1,9 @@
 const LichessApi = require("./LichessApi");
 
-const RobotUser = require("./RobotUser");
+const RobotUser = require("./RobotUser.js");
 const PatzerPlayer = require("./bots/PatzerPlayer");
-const AntiPatzerPlayer = require("./bots/AntiPatzerPlayer");
+// const AntiPatzerPlayer = require("./bots/AntiPatzerPlayer.js");
+const OpeningTreeBot = require("./bots/OpeningTreeBot");
 
 
 /**
@@ -31,8 +32,8 @@ async function startBot(token, player) {
 async function begin() {
   var links = "<h1>Challenge:</h1><br/>";
 
-  links += await startBot(process.env.API_TOKEN, new PatzerPlayer());
-  links += await startBot(process.env.API_TOKEN_SWARM, new AntiPatzerPlayer());
+  // links += await startBot(process.env.API_TOKEN, new PatzerPlayer());
+  links += await startBot(process.env.API_TOKEN, new OpeningTreeBot());
 
   // heroku wakeup server (not necessary otherwise)
 
