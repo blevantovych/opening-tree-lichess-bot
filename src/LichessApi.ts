@@ -1,7 +1,7 @@
 import axiod from "https://deno.land/x/axiod/mod.ts";
 import { createRequire } from "https://deno.land/std/node/module.ts";
 const require = createRequire(import.meta.url);
-const oboe = require("oboe");
+// const oboe = require("oboe");
 // const axiod = require("axiod");
 
 // /**
@@ -96,19 +96,31 @@ class LichessApi {
    * The axiod library does not support streams in the browser so use oboe.
    */
   stream(URL: string, handler: (data: any) => void) {
-    console.log(`GET ${URL} stream`);
-    oboe({
-      method: "GET",
-      url: this.baseURL + URL,
+    console.log("streaming on ", this.baseURL + URL);
+    return axiod(this.baseURL + URL, {
+      method: "get",
+      responseType: "stream",
       headers: this.headers,
     })
-      .node("!", function (data: any) {
-        console.log("STREAM data : " + JSON.stringify(data));
-        handler(data);
+      .then((response) => {
+        console.log("STREAM data : " + JSON.stringify(response.data));
+        handler(response.data);
       })
-      .fail(function (errorReport: any) {
-        console.error(JSON.stringify(errorReport));
-      });
+      .catch((err) => console.log(err));
+    // console.log(`GET ${URL} stream`);
+    // oboe({
+    //   method: "GET",
+    //   url: this.baseURL + URL,
+    //   headers: this.headers,
+    // })
+    //   .node("!", function (data: any) {
+    //     console.log("STREAM data : " + JSON.stringify(data));
+    //     handler(data);
+    //   })
+    //   .fail(function (errorReport: any) {
+    //     console.error(JSON.stringify(errorReport));
+    //   });
+    // }
   }
 }
 
