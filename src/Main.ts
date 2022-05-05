@@ -1,10 +1,8 @@
 import { LichessApi } from "./LichessApi.ts";
-import RobotUser from "./RobotUser.ts";
-import { OpeningTreeBot } from "./bots/OpeningTreeBot";
+import { RobotUser } from "./RobotUser.ts";
+import { OpeningTreeBot } from "./bots/OpeningTreeBot.ts";
+import { Player } from "./bots/Player.ts";
 
-const api = new LichessApi();
-
-// import PatzerPlayer from "./bots/PatzerPlayer";
 // // import AntiPatzerPlayer from "./bots/AntiPatzerPlayer.js";
 // import OpeningTreeBot from "./bots/OpeningTreeBot.ts";
 
@@ -22,13 +20,16 @@ const api = new LichessApi();
 //  *
 //  */
 
-async function startBot(token: string, player) {
+async function startBot(token: string | undefined, player: Player) {
   if (token) {
-    new RobotUser(new LichessApi(token), player);
+    const robot = new RobotUser(new LichessApi(token), player);
+    await robot.start();
   }
 }
 
-await startBot(Deno.env.get("API_TOKEN"), OpeningTreeBot);
+(async function () {
+  await startBot(Deno.env.get("API_TOKEN"), OpeningTreeBot);
+})();
 
 // async function begin() {
 //   var links = "<h1>Challenge:</h1><br/>";

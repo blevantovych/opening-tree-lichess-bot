@@ -1,35 +1,32 @@
-const ChessUtils = require("../utils/ChessUtils");
+// import { ChessUtils } from "../utils/ChessUtils.ts";
 
+// /**
+//  * Pick a random legal move but prefer mates, checks and captures.
+//  */
+// class PatzerPlayer {
+//   getNextMove(moves: string[]) {
+//     const chess = new ChessUtils();
+//     chess.applyMoves(moves);
+//     const legalMoves: { san: string }[] = chess.legalMoves();
+//     const forcing = chess.filterForcing(legalMoves);
+//     const captures = legalMoves.filter((move) => /x/.test(move.san));
 
-/**
- * Pick a random legal move but prefer mates, checks and captures.
- */
-class PatzerPlayer {
+//     if (forcing.length) {
+//       return chess.pickRandomMove(forcing);
+//     }
 
-  getNextMove(moves) {
-    const chess = new ChessUtils();
-    chess.applyMoves(moves);
-    const legalMoves = chess.legalMoves();
-    const forcing = chess.filterForcing(legalMoves);
-    const captures = legalMoves.filter(move => /x/.test(move.san));
+//     if (captures.length) {
+//       return chess.pickRandomMove(captures);
+//     }
 
-    if (forcing.length) {
-      return chess.pickRandomMove(forcing);
-    }
+//     if (legalMoves.length) {
+//       return chess.pickRandomMove(legalMoves);
+//     }
+//   }
 
-    if (captures.length) {
-      return chess.pickRandomMove(captures);
-    }
+//   getReply() {
+//     return "hi";
+//   }
+// }
 
-    if (legalMoves.length) {
-      return chess.pickRandomMove(legalMoves);
-    }
-  }
-
-  getReply(chat) {
-    return "hi";
-  }
-
-}
-
-module.exports = PatzerPlayer;
+// module.exports = PatzerPlayer;

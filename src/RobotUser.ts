@@ -1,5 +1,7 @@
-const LichessApi = require("./LichessApi");
-const Game = require("./Game");
+import { LichessApi } from "./LichessApi.ts";
+// import { OpeningTreeBot } from "./bots/OpeningTreeBot.ts";
+import { Game } from "./Game.ts";
+import { Account, Event } from "./types.ts";
 
 /**
  * RobotUser listens for challenges and spawns Games on accepting.
@@ -9,19 +11,24 @@ class RobotUser {
   /**
    * Initialise with access token to lichess and a player algorithm.
    */
-  constructor(api, player) {
+  account!: Account;
+  api: LichessApi;
+  player: Player;
+
+  constructor(api: LichessApi, player: Player) {
     this.api = api;
     this.player = player;
   }
 
   async start() {
-    this.account = await this.api.accountInfo();
+    this.account = (await this.api.accountInfo()) as any;
+    console.log({ account: this.account });
     console.log("Playing as " + this.account.data.username);
-    this.api.streamEvents((event) => this.eventHandler(event));
+    this.api.streamEvents((event: Event) => this.eventHandler(event));
     return this.account;
   }
 
-  eventHandler(event) {
+  eventHandler(event: Event) {
     switch (event.type) {
       case "challenge":
         this.handleChallenge(event.challenge);
@@ -35,24 +42,24 @@ class RobotUser {
     }
   }
 
-  handleGameStart(id) {
+  handleGameStart(id: string) {
     const game = new Game(this.api, this.account.data.username, this.player);
     game.start(id);
   }
 
-  async handleChallenge(challenge) {
+  async handleChallenge(challenge: Event["challenge"]) {
     if (challenge.rated) {
       console.log("Declining rated challenge from " + challenge.challenger.id);
-      const response = await this.api.declineChallenge(challenge.id);
+      const response: any = await this.api.declineChallenge(challenge.id);
       console.log("Declined", response.data || response);
     } else {
       console.log(
         "Accepting unrated challenge from " + challenge.challenger.id
       );
-      const response = await this.api.acceptChallenge(challenge.id);
+      const response: any = await this.api.acceptChallenge(challenge.id);
       console.log("Accepted", response.data || response);
     }
   }
 }
 
-module.exports = RobotUser;
+export { RobotUser };
