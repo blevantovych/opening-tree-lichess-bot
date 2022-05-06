@@ -1,7 +1,7 @@
-import { LichessApi } from "./LichessApi.ts";
-import { RobotUser } from "./RobotUser.ts";
-import { OpeningTreeBot } from "./bots/OpeningTreeBot.ts";
-import { Player } from "./bots/Player.ts";
+import { LichessApi } from "./LichessApi";
+import { RobotUser } from "./RobotUser";
+import { OpeningTreeBot } from "./bots/OpeningTreeBot";
+import { Player } from "./types";
 
 /**
  * Start a RobotUser (lichess account defined by API_TOKEN) that listens for challenges
@@ -14,7 +14,6 @@ import { Player } from "./bots/Player.ts";
  * export API_TOKEN=xxxxxxxxxxxxxx
  * yarn install
  * yarn start
- *
  */
 
 async function startBot(token: string | undefined, player: Player) {
@@ -24,4 +23,6 @@ async function startBot(token: string | undefined, player: Player) {
   }
 }
 
-await startBot(Deno.env.get("API_TOKEN"), OpeningTreeBot);
+(async function () {
+  await startBot(process.env.API_TOKEN, new OpeningTreeBot());
+})();

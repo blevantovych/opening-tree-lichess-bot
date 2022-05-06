@@ -496,6 +496,13 @@
   "resolved" "https://registry.npmjs.org/@types/node/-/node-17.0.30.tgz"
   "version" "17.0.30"
 
+"@types/oboe@^2.1.1":
+  "integrity" "sha512-Ytg7xGrqNpnWvzK9G2k+ZzTYiG+h+FGxQ5uDR/YBmBYv8P6HkpRwHjwH+Vcuesv6anZnB3AeqX2Wm/CP+e8JFA=="
+  "resolved" "https://registry.npmjs.org/@types/oboe/-/oboe-2.1.1.tgz"
+  "version" "2.1.1"
+  dependencies:
+    "@types/node" "*"
+
 "@types/prop-types@*":
   "integrity" "sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw=="
   "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.3.tgz"

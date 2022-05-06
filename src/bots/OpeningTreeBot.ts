@@ -1,13 +1,9 @@
-import { ChessUtils } from "../utils/ChessUtils.ts";
-import { Player } from "./Player.ts";
-import axiod from "https://deno.land/x/axiod/mod.ts";
-import { createRequire } from "https://deno.land/std/node/module.ts";
-const require = createRequire(import.meta.url);
-const oboe = require("oboe");
+import { ChessUtils } from "../utils/ChessUtils";
+import { Player } from "../types";
+import axios from "axios";
 
 /**
  * Play moves from Lichess's opening tree
- *
  */
 class OpeningTreeBot implements Player {
   constructor() {
@@ -19,13 +15,14 @@ class OpeningTreeBot implements Player {
     // const patzer = new PatzerPlayer();
     const chess = new ChessUtils();
     chess.applyMoves(moves);
-    const fen = chess.chess.fen();
+    const fen = chess.fen();
     const turn = chess.chess.turn() === "b" ? "black" : "white";
-    const player = "Sombranegra30";
+    // const player = "Sombranegra30";
+    const player = "ich2";
     //  if (this.outOfBook) {
     //      return new Promise(r => r(patzer.getNextMove(moves)));
     //  }
-    return axiod
+    return axios
       .get(
         // `https://explorer.lichess.ovh/masters?variant=standard&fen=${fen}`
         // `https://explorer.lichess.ovh/lichess?variant=standard&fen=${fen}`

@@ -1,8 +1,6 @@
-import { createRequire } from "https://deno.land/std/node/module.ts";
-const require = createRequire(import.meta.url);
-const Chess = require("chess.js");
+const { Chess } = require("chess.js");
 
-import { ChessInstance, Color } from "../types.ts";
+import { ChessInstance } from "../types";
 /**
  * Wraps chess.js with useful extras.
  */

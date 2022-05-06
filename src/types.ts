@@ -1,3 +1,11 @@
+export interface Player {
+  getNextMove(
+    moves: string[],
+    sayInChat: (msg: string) => void
+  ): Promise<string>;
+  getReply(event: Event): string;
+}
+
 export type Event = {
   white: {
     name: string;

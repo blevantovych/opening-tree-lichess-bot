@@ -1,11 +1,10 @@
-import { LichessApi } from "./LichessApi.ts";
-// import { OpeningTreeBot } from "./bots/OpeningTreeBot.ts";
-import { Game } from "./Game.ts";
-import { Account, Event } from "./types.ts";
+import { LichessApi } from "./LichessApi";
+// import { OpeningTreeBot } from "./bots/OpeningTreeBot";
+import { Game } from "./Game";
+import { Player, Account, Event } from "./types";
 
 /**
  * RobotUser listens for challenges and spawns Games on accepting.
- *
  */
 class RobotUser {
   /**
@@ -34,7 +33,6 @@ class RobotUser {
         this.handleChallenge(event.challenge);
         break;
       case "gameStart":
-        console.log({ event });
         this.handleGameStart(event.game.id);
         break;
       default:

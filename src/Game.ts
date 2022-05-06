@@ -1,6 +1,6 @@
-import { LichessApi } from "./LichessApi.ts";
-import { Player } from "./bots/Player.ts";
-import { Color, Event } from "./types.ts";
+import { LichessApi } from "./LichessApi";
+import { Player, Color, Event } from "./types";
+import { OpeningTreeBot } from "./bots/OpeningTreeBot";
 
 /**
  * Game subscribes to gameId events and handles them posting moves
@@ -8,7 +8,6 @@ import { Color, Event } from "./types.ts";
  *
  * getNextMove(array of uciMoves) returns uciMove
  * getReply(chat event) returns chat message
- *
  */
 class Game {
   /**
@@ -52,7 +51,6 @@ class Game {
         this.playNextMove(event.state.moves);
         break;
       case "gameState":
-        console.log(JSON.stringify({ event }, null, 4));
         this.playNextMove(event.moves);
         break;
       default:
@@ -67,7 +65,7 @@ class Game {
   playNextMove(previousMoves: string) {
     const moves = previousMoves === "" ? [] : previousMoves.split(" ");
     if (this.isTurn(this.colour, moves)) {
-      this.player
+      (this.player as OpeningTreeBot)
         .getNextMove(moves, this.sayInChat)
         .then((nextMove: string) => {
           console.log(`\n\n nextmove: ${nextMove} \n\n`);
