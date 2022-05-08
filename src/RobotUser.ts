@@ -1,15 +1,8 @@
 import { LichessApi } from "./LichessApi";
-// import { OpeningTreeBot } from "./bots/OpeningTreeBot";
 import { Game } from "./Game";
-import { Player, Account, Event } from "./types";
+import { Player, Account, GeneralEvent, Challenge } from "./types";
 
-/**
- * RobotUser listens for challenges and spawns Games on accepting.
- */
 class RobotUser {
-  /**
-   * Initialise with access token to lichess and a player algorithm.
-   */
   account!: Account;
   api: LichessApi;
   player: Player;
@@ -21,13 +14,11 @@ class RobotUser {
 
   async start() {
     this.account = (await this.api.accountInfo()) as any;
-    console.log({ account: this.account });
-    console.log("Playing as " + this.account.data.username);
-    this.api.streamEvents((event: Event) => this.eventHandler(event));
+    this.api.streamEvents((event: GeneralEvent) => this.eventHandler(event));
     return this.account;
   }
 
-  eventHandler(event: Event) {
+  eventHandler(event: GeneralEvent) {
     switch (event.type) {
       case "challenge":
         this.handleChallenge(event.challenge);
@@ -45,18 +36,8 @@ class RobotUser {
     game.start(id);
   }
 
-  async handleChallenge(challenge: Event["challenge"]) {
-    if (challenge.rated) {
-      console.log("Declining rated challenge from " + challenge.challenger.id);
-      const response: any = await this.api.declineChallenge(challenge.id);
-      console.log("Declined", response.data || response);
-    } else {
-      console.log(
-        "Accepting unrated challenge from " + challenge.challenger.id
-      );
-      const response: any = await this.api.acceptChallenge(challenge.id);
-      console.log("Accepted", response.data || response);
-    }
+  async handleChallenge(challenge: Challenge["challenge"]) {
+    await this.api.acceptChallenge(challenge.id);
   }
 }
 

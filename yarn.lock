@@ -460,6 +460,11 @@
   "resolved" "https://registry.npmjs.org/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz"
   "version" "0.7.1"
 
+"@types/chess.js@^0.13.0":
+  "integrity" "sha512-zwsJ83aAZ9MeVOLc/tYhnKcmG1IUlmdPzRINjixSnFMofDf3LxnLRaOg3bxH4s730xKfyHPm5I4axwY42LADWQ=="
+  "resolved" "https://registry.npmjs.org/@types/chess.js/-/chess.js-0.13.0.tgz"
+  "version" "0.13.0"
+
 "@types/color-name@^1.1.1":
   "integrity" "sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ=="
   "resolved" "https://registry.npmjs.org/@types/color-name/-/color-name-1.1.1.tgz"

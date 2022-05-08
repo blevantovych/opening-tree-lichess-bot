@@ -86,11 +86,6 @@ class LichessApi {
       .catch((err: any) => console.log(err.response || err));
   }
 
-  /**
-   * Connect to stream with handler.
-   *
-   * The axios library does not support streams in the browser so use oboe.
-   */
   stream(URL: string, handler: (data: any) => void) {
     oboe({
       method: "GET",
@@ -104,7 +99,6 @@ class LichessApi {
       .fail(function (errorReport: any) {
         console.error(JSON.stringify(errorReport));
       });
-    // }
   }
 }
 

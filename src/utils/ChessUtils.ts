@@ -1,12 +1,7 @@
-const { Chess } = require("chess.js");
+import { Chess, ChessInstance } from "chess.js";
 
-import { ChessInstance } from "../types";
-/**
- * Wraps chess.js with useful extras.
- */
 class ChessUtils {
   chess: ChessInstance;
-
   constructor(
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   ) {

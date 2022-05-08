@@ -5,8 +5,8 @@
   "main": "src/Main.js",
   "scripts": {
     "test": "nyc tap test/*",
-    "start": "node src/Main.js",
-    "tournament": "node src/tournament/Main.js",
+    "start": "npx ts-node src/Main.ts",
+    "tournament": "node src/tournament/Main.s",
     "build": "webpack",
     "deps": "npx yarn-check --skip-unused"
   },
@@ -25,6 +25,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
+    "@types/chess.js": "^0.13.0",
     "@types/oboe": "^2.1.1",
     "axios": "^0.21.4",
     "chess.js": "^0.12.0",
