@@ -5,7 +5,7 @@ class ChessUtils {
   constructor(
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   ) {
-    this.chess = new Chess(fen);
+    this.chess = Chess(fen);
   }
 
   reset() {
@@ -13,7 +13,18 @@ class ChessUtils {
   }
 
   applyMoves(moves: string[]) {
-    moves.forEach((move) => this.chess.move(move, { sloppy: true }));
+    moves.forEach((move) => {
+      const res = this.chess.move(move, { sloppy: true });
+      if (res === null) {
+        // for some reason Lichess API returns e1h1 for white's short castle 🤷
+        if (move === "e1h1" || move === "e8h8") {
+          this.chess.move("O-O", { sloppy: true });
+        }
+        if (move === "e1c1" || move === "e8c8") {
+          this.chess.move("O-O-O", { sloppy: true });
+        }
+      }
+    });
   }
 
   /**

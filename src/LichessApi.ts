@@ -1,18 +1,12 @@
 const oboe = require("oboe");
+import { GameStateEvent, GeneralEvent } from "./types";
 import axios from "axios";
 
-// /**
-//  * Programatic interface to the web API of lichess https://lichess.org/api#tag/Bot
-//  *
-//  */
 class LichessApi {
   baseURL: string;
   headers: { [key: string]: unknown };
   axiosConfig: { [key: string]: unknown };
 
-  /**
-   * Initialise with access token from https://lichess.org/account/oauth/token/create.
-   */
   constructor(token: string | undefined) {
     this.baseURL = "https://lichess.org/";
     this.headers = { Authorization: `Bearer ${token}` };
@@ -50,11 +44,11 @@ class LichessApi {
     return this.post(`api/bot/game/${gameId}/resign`);
   }
 
-  streamEvents(handler: (data: any) => void) {
+  streamEvents(handler: (data: GeneralEvent) => void) {
     return this.stream("api/stream/event", handler);
   }
 
-  streamGame(gameId: string, handler: (data: any) => void) {
+  streamGame(gameId: string, handler: (data: GameStateEvent) => void) {
     return this.stream(`api/bot/game/stream/${gameId}`, handler);
   }
 
@@ -75,28 +69,28 @@ class LichessApi {
     return axios
       .get(URL + "?v=" + Date.now(), this.axiosConfig)
       .then(this.logAndReturn)
-      .catch((err: any) => console.log(err));
+      .catch((err) => console.log(err));
   }
 
-  post(URL: string, body?: any) {
+  post<T>(URL: string, body?: T) {
     console.log(`POST ${URL} ` + JSON.stringify(body || {}));
     return axios
       .post(URL, body || {}, this.axiosConfig)
       .then(this.logAndReturn)
-      .catch((err: any) => console.log(err.response || err));
+      .catch((err) => console.log(err.response || err));
   }
 
-  stream(URL: string, handler: (data: any) => void) {
+  stream<T>(URL: string, handler: (data: T) => void) {
     oboe({
       method: "GET",
       url: this.baseURL + URL,
       headers: this.headers,
     })
-      .node("!", function (data: any) {
+      .node("!", function (data: T) {
         console.log("STREAM data : " + JSON.stringify(data));
         handler(data);
       })
-      .fail(function (errorReport: any) {
+      .fail(function (errorReport: unknown) {
         console.error(JSON.stringify(errorReport));
       });
   }

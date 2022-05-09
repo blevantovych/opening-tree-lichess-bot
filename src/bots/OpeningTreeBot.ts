@@ -6,8 +6,16 @@ import axios from "axios";
  * Play moves from Lichess's opening tree
  */
 class OpeningTreeBot implements Player {
-  async getNextMove(moves: string[], sayInChat: (msg: string) => void) {
-    const chess = new ChessUtils();
+  async getNextMove({
+    moves,
+    sayInChat,
+    fen: initialFen,
+  }: {
+    moves: string[];
+    sayInChat: (msg: string) => void;
+    fen?: string;
+  }) {
+    const chess = new ChessUtils(initialFen);
     chess.applyMoves(moves);
     const fen = chess.fen();
     const turn = chess.chess.turn() === "b" ? "black" : "white";
@@ -27,6 +35,7 @@ class OpeningTreeBot implements Player {
     }
 
     sayInChat("I am out of book! Brace yourself!");
+    return "";
   }
 
   getReply() {

@@ -1,43 +1,105 @@
 export interface Player {
-  getNextMove(
-    moves: string[],
-    sayInChat: (msg: string) => void
-  ): Promise<string>;
+  getNextMove({
+    moves,
+    sayInChat,
+    fen,
+  }: {
+    moves: string[];
+    sayInChat: (msg: string) => void;
+    fen: string;
+  }): Promise<string>;
 }
+
+type Variant = {
+  key: string;
+  name: string;
+  shortId?: string;
+};
+
+type User = {
+  id: string;
+  name: string;
+  online?: boolean;
+  provisional?: boolean;
+  rating: number;
+  title: string | null;
+};
 
 export type Challenge = {
   type: "challenge";
   challenge: {
+    challenger: User;
+    color: Color | "random";
+    destUser: User;
+    finalColor: Color;
     id: string;
+    initialFen: string;
     rated: boolean;
-    challenger: {
-      id: string;
+    speed: string;
+    status: string;
+    timeControl: {
+      type: string;
     };
+    url: string;
+    variant: Variant;
   };
 };
 
 export type GameStart = {
   type: "gameStart";
   game: {
+    color: Color;
+    compat: {
+      bot: boolean;
+      board: boolean;
+    };
+    fen: string;
+    fullId: string;
+    gameId: string;
+    hasMoved: boolean;
     id: string;
+    isMyTurn: boolean;
+    lastMove: string;
+    opponent: {
+      id: string;
+      username: string;
+      rating: number;
+    };
+    perf: string;
+    rated: boolean;
+    source: string;
+    speed: string;
+    variant: Variant;
   };
 };
 
 export type GeneralEvent = Challenge | GameStart;
 
 export type GameFull = {
-  type: "gameFull";
-  white: {
+  black: User;
+  clock: unknown;
+  createdAt: number;
+  id: string;
+  initialFen: string | "startpos";
+  perf: {
     name: string;
   };
-  state: {
-    moves: string;
-  };
+  rated: boolean;
+  speed: string;
+  state: GameState;
+  type: "gameFull";
+  variant: Variant;
+  white: User;
 };
 
 export type GameState = {
-  type: "gameState";
+  binc: number;
+  btime: number;
   moves: string;
+  status: string;
+  type: "gameState";
+  winc: number;
+  wtime: number;
 };
 
 export type ChatLine = {

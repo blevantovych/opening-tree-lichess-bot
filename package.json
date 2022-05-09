@@ -4,33 +4,19 @@
   "description": "Lichess bot event and game code flow example",
   "main": "src/Main.js",
   "scripts": {
-    "test": "nyc tap test/*",
-    "start": "npx ts-node src/Main.ts",
-    "tournament": "node src/tournament/Main.s",
-    "build": "webpack",
-    "deps": "npx yarn-check --skip-unused"
+    "start": "ts-node src/Main.ts",
+    "debug": "nodemon --exec \"node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/Main.ts\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "coveralls": "^3.1.1",
-    "moxios": "^0.4.0",
-    "nock": "^10.0.6",
-    "nyc": "^15.1.0",
-    "sinon": "^9.0.2",
-    "tap": "^14.10.7",
-    "tape": "^4.13.2",
-    "webpack": "^5.52.0",
-    "webpack-cli": "^4.8.0"
-  },
   "dependencies": {
-    "@types/chess.js": "^0.13.0",
-    "@types/oboe": "^2.1.1",
-    "axios": "^0.21.4",
-    "chess.js": "^0.12.0",
-    "express": "^4.17.1",
-    "ndjson": "^2.0.0",
-    "oboe": "^2.1.5"
+    "@types/chess.js": "0.13.0",
+    "@types/oboe": "2.1.1",
+    "axios": "0.27.2",
+    "chess.js": "0.12.0",
+    "nodemon": "^2.0.16",
+    "oboe": "2.1.5",
+    "ts-node": "^10.7.0"
   }
 }

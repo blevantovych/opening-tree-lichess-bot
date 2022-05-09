@@ -1,9 +1,9 @@
 import { LichessApi } from "./LichessApi";
 import { Game } from "./Game";
-import { Player, Account, GeneralEvent, Challenge } from "./types";
+import { Player, Account, GeneralEvent, Challenge, GameStart } from "./types";
 
 class RobotUser {
-  account!: Account;
+  account: Account;
   api: LichessApi;
   player: Player;
 
@@ -24,16 +24,18 @@ class RobotUser {
         this.handleChallenge(event.challenge);
         break;
       case "gameStart":
-        this.handleGameStart(event.game.id);
+        this.handleGameStart(event);
         break;
       default:
         console.log("Unhandled event : " + JSON.stringify(event));
     }
   }
 
-  handleGameStart(id: string) {
+  handleGameStart(event: GameStart) {
     const game = new Game(this.api, this.account.data.username, this.player);
-    game.start(id);
+    const { color, fen, id: gameId } = event.game;
+
+    game.start({ gameId, color, fen });
   }
 
   async handleChallenge(challenge: Challenge["challenge"]) {
