@@ -41,20 +41,31 @@ class OpeningTreeBot implements Player {
     console.log({ fen });
     const turn = chess.chess.turn() === "b" ? "black" : "white";
 
-    // const player = "Sombranegra30";
-    // const player = "ich2";
-    const player = "Kazakg_Fighter";
+    const player = "Zazuliak";
 
     const openingMoves: { data?: { moves?: { uci: string }[] } } =
       await axios.get(
         // `https://explorer.lichess.ovh/masters?variant=standard&fen=${fen}`
-        // `https://explorer.lichess.ovh/lichess?variant=standard&fen=${fen}`
-        `https://explorer.lichess.ovh/player?player=${player}&variant=standard&color=${turn}&fen=${fen}&recentGames=0`
+        `https://explorer.lichess.ovh/lichess?variant=standard&fen=${fen}`
+        // `https://explorer.lichess.ovh/player?player=${player}&variant=standard&color=${turn}&fen=${fen}&recentGames=0`
       );
 
-    if (openingMoves?.data?.moves?.[0]) {
-      console.log("move: ", openingMoves?.data?.moves?.[0]);
-      return openingMoves.data.moves[0].uci;
+    if (openingMoves?.data?.moves?.length >= 1) {
+      // const movesWhereOppositeSideWinsMore = openingMoves.data.moves.filter(
+      //   (move) => {
+      //     return move[turn] / move[turn === "black" ? "white" : "black"]
+      //   }
+      // );
+      const randomIndex = Math.floor(
+        Math.random() *
+          Math.min(
+            openingMoves.data.moves.length,
+            3 /* play one of the top 3 moves */
+          )
+      );
+      const move = openingMoves.data.moves[randomIndex];
+      console.log("move: ", move);
+      return move.uci;
     } else {
       console.log("asking stockfish");
       stockfish.stdin.write("ucinewgame\n");

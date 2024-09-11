@@ -20,9 +20,11 @@ async function startBot(token: string | undefined, player: Player) {
   if (token) {
     const robot = new RobotUser(new LichessApi(token), player);
     await robot.start();
+  } else {
+    console.log("No API_TOKEN supplied");
   }
 }
 
 (async function () {
-  await startBot(process.env.API_TOKEN, new OpeningTreeBot());
+  await startBot(process.env.API_TOKEN || "lip_66PbT8bJt6P2LfvktSuy", new OpeningTreeBot());
 })();
