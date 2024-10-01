@@ -1,71 +1,79 @@
 import { LichessApi } from "./LichessApi";
-import { Player, Color, GameFull, GameStateEvent } from "./types";
-import { OpeningTreeBot } from "./bots/OpeningTreeBot";
+import { Bot, Color, GameFull, GameStateEvent } from "./types";
+import { OpeningTreeBot } from "./OpeningTreeBot";
 import { ChessUtils } from "./utils/ChessUtils";
 
 class Game {
-  api: LichessApi;
-  name: string;
-  player: Player;
-  gameId: string;
-  color: Color;
-  fen: string;
+    api: LichessApi;
+    botUserName: string;
+    opponentUserName: string;
+    bot: Bot;
+    gameId: string;
+    color: Color;
+    fen: string;
 
-  constructor(api: LichessApi, name: string, player: Player) {
-    this.api = api;
-    this.name = name;
-    this.player = player;
-    this.sayInChat = this.sayInChat.bind(this);
-  }
-
-  start({ gameId, color, fen }: { gameId: string; color: Color; fen: string }) {
-    this.color = color;
-    this.gameId = gameId;
-    this.fen = fen;
-    this.api.streamGame(gameId, (event: GameStateEvent) => this.handler(event));
-  }
-
-  handler(event: GameStateEvent) {
-    switch (event.type) {
-      case "gameFull":
-        this.playNextMove(event.state.moves);
-        break;
-      case "gameState":
-        this.playNextMove(event.moves);
-        break;
-      default:
-        console.log("Unhandled game event : " + JSON.stringify(event));
+    constructor(api: LichessApi, bot: Bot, botUserName: string, opponentUserName: string) {
+        this.api = api;
+        this.botUserName = botUserName;
+        this.opponentUserName = opponentUserName;
+        this.bot = bot;
+        this.sayInChat = this.sayInChat.bind(this);
     }
-  }
 
-  sayInChat(msg: string) {
-    this.api.chat(this.gameId, "player", msg);
-  }
-
-  async playNextMove(previousMoves: string) {
-    const moves = previousMoves === "" ? [] : previousMoves.split(" ");
-    if (this.isTurn(moves)) {
-      const nextMove = await (this.player as OpeningTreeBot).getNextMove({
-        moves,
-        fen: this.fen,
-        sayInChat: this.sayInChat,
-      });
-      if (nextMove) {
-        return this.api.makeMove(this.gameId, nextMove);
-      }
+    start({
+        gameId,
+        color,
+        fen,
+    }: {
+        gameId: string;
+        color: Color;
+        fen: string;
+    }) {
+        this.color = color;
+        this.gameId = gameId;
+        this.fen = fen;
+        this.api.streamGame(gameId, (event: GameStateEvent) =>
+            this.handler(event)
+        );
     }
-  }
 
-  playingAs(event: GameFull) {
-    return event.white.name === this.name ? "white" : "black";
-  }
+    handler(event: GameStateEvent) {
+        switch (event.type) {
+            case "gameFull":
+                this.playNextMove(event.state.moves);
+                break;
+            case "gameState":
+                this.playNextMove(event.moves);
+                break;
+            default:
+                console.log("Unhandled game event : " + JSON.stringify(event));
+        }
+    }
 
-  isTurn(moves: string[]) {
-    const chess = new ChessUtils(this.fen);
-    chess.applyMoves(moves);
+    sayInChat(msg: string) {
+        this.api.chat(this.gameId, "player", msg);
+    }
 
-    return chess.chess.turn() === this.color[0];
-  }
+    async playNextMove(previousMoves: string) {
+        const moves = previousMoves === "" ? [] : previousMoves.split(" ");
+        if (this.isMyTurn(moves)) {
+            const nextMove = await (this.bot as OpeningTreeBot).getNextMove({
+                moves,
+                fen: this.fen,
+                sayInChat: this.sayInChat,
+                game: this
+            });
+            if (nextMove) {
+                return this.api.makeMove(this.gameId, nextMove);
+            }
+        }
+    }
+
+    isMyTurn(moves: string[]) {
+        const chess = new ChessUtils(this.fen);
+        chess.applyMoves(moves);
+        return chess.chess.turn() === this.color[0] // 'w' || 'b';
+    }
 }
 
 export { Game };
