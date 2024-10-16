@@ -3,6 +3,7 @@ import { Bot, Challenge, GameStart, GeneralEvent } from "./types";
 import { spawn } from "child_process";
 import { Game } from "./Game";
 import { LichessApi } from "./LichessApi";
+import logger from "./logger";
 
 const stockfish = spawn("stockfish");
 
@@ -14,7 +15,7 @@ function getBestMove(): Promise<string> {
             // console.log(`chunk from stockfigh `, chunk.toString());
             if (chunk.toString().includes("bestmove")) {
                 const bestmove = chunk.toString().match(/(?<=bestmove )\w+/);
-                console.log({ bestmove });
+                // console.log({ bestmove });
                 if (bestmove) {
                     resolve(bestmove[0]);
                 }
@@ -40,17 +41,17 @@ class OpeningTreeBot implements Bot {
         moves,
         sayInChat,
         fen: initialFen,
-        game
+        game,
     }: {
         moves: string[];
         sayInChat: (msg: string) => void;
         fen?: string;
-        game: Game
+        game: Game;
     }) {
         const chess = new ChessUtils(initialFen);
         chess.applyMoves(moves);
         const fen = chess.fen();
-        console.log({ fen });
+        // console.log({ fen });
         const turn = chess.chess.turn() === "b" ? "black" : "white";
 
         const player = "Zazuliak";
@@ -60,7 +61,7 @@ class OpeningTreeBot implements Bot {
             `https://explorer.lichess.ovh/lichess?variant=standard&fen=${fen}`
             // `https://explorer.lichess.ovh/player?player=${player}&variant=standard&color=${turn}&fen=${fen}&recentGames=0`
         ).then((res) => res.json());
-        console.log({ openingMoves });
+        // console.log({ openingMoves });
 
         if (openingMoves?.moves?.length >= 1) {
             // const movesWhereOppositeSideWinsMore = openingMoves.data.moves.filter(
@@ -77,7 +78,7 @@ class OpeningTreeBot implements Bot {
             // );
             // const move = openingMoves.data.moves[randomIndex];
             const move = openingMoves.moves[0];
-            console.log("move: ", move);
+            // console.log("move: ", move);
             return move.uci;
         } else {
             if (!stockfishUseAnnounced[game.opponentUserName]) {
@@ -85,13 +86,13 @@ class OpeningTreeBot implements Bot {
                 stockfishUseAnnounced[game.opponentUserName] = true;
             }
 
-            console.log("asking stockfish");
+            logger.info({ message: "asking stockfish" });
             stockfish.stdin.write("ucinewgame\n");
             stockfish.stdin.write(`position fen ${fen}\n`);
             stockfish.stdin.write(`go movetime 3000\n`);
             const bestMove = await getBestMove();
             stockfish.stdin.write("stop \n");
-            console.log(`best move from stockfish ${bestMove}`);
+            logger.info({ message: `best move from stockfish ${bestMove}` });
             return bestMove;
         }
     }
@@ -110,14 +111,14 @@ class OpeningTreeBot implements Bot {
                     this.handleGameStart(event);
                     break;
                 default:
-                    console.log("Unhandled event : " + JSON.stringify(event));
+                    logger.error({ message: `Unhandled event`, event });
             }
         });
     }
 
     async handleGameStart(event: GameStart) {
         const botAccount = (await this.api.accountInfo()) as any;
-        const opponentUserName = event.game.opponent.username
+        const opponentUserName = event.game.opponent.username;
         const botUserName = botAccount.data.username;
         const game = new Game(this.api, this, botUserName, opponentUserName);
         const { color, fen, id: gameId } = event.game;
@@ -128,7 +129,6 @@ class OpeningTreeBot implements Bot {
     async handleChallenge(challenge: Challenge["challenge"]) {
         await this.api.acceptChallenge(challenge.id);
     }
-
 }
 
 export { OpeningTreeBot };

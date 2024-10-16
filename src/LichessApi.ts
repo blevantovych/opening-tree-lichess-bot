@@ -1,6 +1,7 @@
 import * as oboe from "oboe";
 import { GameStateEvent, GeneralEvent } from "./types";
 import axios from "axios";
+import logger from "./logger";
 
 class LichessApi {
     baseURL: string;
@@ -60,12 +61,15 @@ class LichessApi {
     }
 
     logAndReturn(data: { data: unknown }) {
-        console.log(JSON.stringify(data.data, null, 4));
+        // console.log(JSON.stringify(data.data, null, 4));
         return data;
     }
 
     async get({ URL }: { URL: string }) {
-        console.log(`GET ${URL}`);
+        logger.info({
+            message: `Making GET`,
+            url: URL,
+        });
         try {
             const data = await axios.get(
                 URL + "?v=" + Date.now(),
@@ -73,17 +77,21 @@ class LichessApi {
             );
             return this.logAndReturn(data);
         } catch (err) {
-            return console.log(err);
+            logger.error({ message: "Error on GET", error: err });
         }
     }
 
     async post<T>(URL: string, body?: T) {
-        console.log(`POST ${URL} ` + JSON.stringify(body || {}));
+        logger.info({
+            message: `Making POST`,
+            url: URL,
+            body,
+        });
         try {
             const data = await axios.post(URL, body || {}, this.axiosConfig);
             return this.logAndReturn(data);
         } catch (err) {
-            return console.log(err.response || err);
+            logger.error({ message: "Error on POST", error: err });
         }
     }
 
@@ -94,11 +102,17 @@ class LichessApi {
             headers: this.headers,
         })
             .node("!", function (data: T) {
-                console.log("STREAM data : " + JSON.stringify(data));
+                logger.info({
+                    message: "Got stream data",
+                    data,
+                });
                 handler(data);
             })
             .fail(function (errorReport: unknown) {
-                console.error(JSON.stringify(errorReport));
+                logger.error({
+                    message: "streaming fialed",
+                    errorReport,
+                });
             });
     }
 }

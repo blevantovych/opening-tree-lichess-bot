@@ -1,7 +1,8 @@
 import { LichessApi } from "./LichessApi";
-import { Bot, Color, GameFull, GameStateEvent } from "./types";
+import { Bot, Color, GameStateEvent } from "./types";
 import { OpeningTreeBot } from "./OpeningTreeBot";
 import { ChessUtils } from "./utils/ChessUtils";
+import logger from "./logger";
 
 class Game {
     api: LichessApi;
@@ -12,7 +13,12 @@ class Game {
     color: Color;
     fen: string;
 
-    constructor(api: LichessApi, bot: Bot, botUserName: string, opponentUserName: string) {
+    constructor(
+        api: LichessApi,
+        bot: Bot,
+        botUserName: string,
+        opponentUserName: string
+    ) {
         this.api = api;
         this.botUserName = botUserName;
         this.opponentUserName = opponentUserName;
@@ -46,7 +52,11 @@ class Game {
                 this.playNextMove(event.moves);
                 break;
             default:
-                console.log("Unhandled game event : " + JSON.stringify(event));
+                logger.info({
+                    message: "Unhandled game event",
+                    event_type: event.type,
+                    event,
+                });
         }
     }
 
@@ -61,7 +71,7 @@ class Game {
                 moves,
                 fen: this.fen,
                 sayInChat: this.sayInChat,
-                game: this
+                game: this,
             });
             if (nextMove) {
                 return this.api.makeMove(this.gameId, nextMove);
@@ -72,7 +82,7 @@ class Game {
     isMyTurn(moves: string[]) {
         const chess = new ChessUtils(this.fen);
         chess.applyMoves(moves);
-        return chess.chess.turn() === this.color[0] // 'w' || 'b';
+        return chess.chess.turn() === this.color[0]; // 'w' || 'b';
     }
 }
 
