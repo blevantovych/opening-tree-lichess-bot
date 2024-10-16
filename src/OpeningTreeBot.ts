@@ -24,8 +24,13 @@ function getBestMove(): Promise<string> {
     });
 }
 
-stockfish.stdout.pipe(process.stdout);
-stockfish.stdin.write("isready\n");
+// Function to send commands to Stockfish
+const sendCommand = (command: string) => {
+    stockfish.stdin.write(`${command}\n`);
+};
+
+sendCommand("isready");
+
 /**
  * Play moves from Lichess's opening tree
  */
@@ -87,11 +92,11 @@ class OpeningTreeBot implements Bot {
             }
 
             logger.info({ message: "asking stockfish" });
-            stockfish.stdin.write("ucinewgame\n");
-            stockfish.stdin.write(`position fen ${fen}\n`);
-            stockfish.stdin.write(`go movetime 3000\n`);
+            sendCommand("ucinewgame");
+            sendCommand(`position fen ${fen}`);
+            sendCommand(`go movetime 3000`);
             const bestMove = await getBestMove();
-            stockfish.stdin.write("stop \n");
+            sendCommand("stop");
             logger.info({ message: `best move from stockfish ${bestMove}` });
             return bestMove;
         }

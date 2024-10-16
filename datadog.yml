@@ -1,0 +1,7 @@
+logs_enabled: true
+
+logs_config:
+  - type: file
+    path: /home/ssm-user/opening-tree-lichess-bot/app.log
+    service: opening-bot
+    source: nodejs
